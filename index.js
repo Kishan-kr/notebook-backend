@@ -8,7 +8,9 @@ const app = express();
 const port = process.env.PORT || 80;
 
 // middlewares 
-app.use(cors());
+app.use(cors({
+    origin:"https://on-notebook.netlify.app"
+}));
 app.use(express.json())
 
 // routes 
