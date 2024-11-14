@@ -40,7 +40,7 @@ router.get('/getnote', fetchUser, async (req, res) => {
 
     try {
         // Finding all notes from user id and sending all notes as response
-        const notes = await Note.find({ user: user, trashed: false });
+        const notes = await Note.find({ user: user, trashed: false }).sort({createdOn : -1});
         if (!notes) {
             return res.status(200).send('You do not have any notes, Please add some')
         }

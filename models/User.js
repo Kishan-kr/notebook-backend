@@ -18,6 +18,9 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
+    branch: {
+        type: String
+    },
     pic: {
         type: String,
         default: ""

@@ -12,7 +12,7 @@ Router.post('/createuser', [
     // validating user info 
     body('name', 'Name is not valid').isLength({ min: 3 }),
     body('email', 'Email is not valid').isEmail(),
-    body('password', 'Password is too short').isLength({ min: 6 }),
+    body('password', 'Password is too short').isLength({ min: 6 }).isAlphanumeric().withMessage('Password must contain alphabets as well as numbers'),
     body('profession', 'Profession not provided').exists()
 ], async (req, res) => {
     // useful for client side 
@@ -37,7 +37,8 @@ Router.post('/createuser', [
                 name: req.body.name,
                 email: req.body.email,
                 password: hash,
-                profession: req.body.profession
+                profession: req.body.profession,
+                branch: req.body.branch
             }).then((user) => {
                 const data = {
                     user: {
