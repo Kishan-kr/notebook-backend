@@ -12,7 +12,10 @@ Router.post('/createuser', [
     // validating user info 
     body('name', 'Name is not valid').isLength({ min: 3 }),
     body('email', 'Email is not valid').isEmail(),
-    body('password', 'Password is too short').isLength({ min: 6 }).isAlphanumeric().withMessage('Password must contain alphabets as well as numbers'),
+    body('password', 'Password must be at least 6 characters long and contain alphabets, numbers, and special characters')
+    .isLength({ min: 6 })
+    .matches(/^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\W_]).+$/)
+    .withMessage('Password must contain at least one letter, one number, and one special character'),
     body('profession', 'Profession not provided').exists()
 ], async (req, res) => {
     // useful for client side 
