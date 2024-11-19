@@ -20,7 +20,7 @@ Router.post('/createuser', [
     const errors = validationResult(req);
     // sending errors as response if available 
     if (!errors.isEmpty()) {
-        return res.status(400).json({ success, errors: errors.array() });
+        return res.status(400).json({ success, error: errors.array() });
     }
 
     // checking if this email already exists in DB 
@@ -64,7 +64,7 @@ Router.post('/login', [
     // checking validation errors 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ success, errors: errors.array() });
+        return res.status(400).json({ success, error: errors.array() });
     }
 
     // destructuring 'email' and 'password' from request body 
@@ -117,9 +117,9 @@ Router.put('/uploadpic', fetchUser, [
 
     // checking if user exits or not 
     try {
-        let newUser = await User.findByIdAndUpdate(user.id, {pic}, {new: true});
+        let newUser = await User.findByIdAndUpdate(user.id, { pic }, { new: true });
         success = true;
-        return res.status(200).json({success, newUser});
+        return res.status(200).json({ success, newUser });
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal server error occured');
@@ -134,7 +134,7 @@ Router.put('/update', fetchUser, [
 ], async (req, res) => {
     let success = false;
     const user = req.user;
-    
+
     // checking validation errors 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -146,9 +146,9 @@ Router.put('/update', fetchUser, [
 
     // checking if user exits or not 
     try {
-        let newUser = await User.findByIdAndUpdate(user.id, {name, profession}, {new: true});
+        let newUser = await User.findByIdAndUpdate(user.id, { name, profession }, { new: true });
         success = true;
-        return res.status(200).json({success, newUser});
+        return res.status(200).json({ success, newUser });
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal server error occured');
@@ -169,6 +169,28 @@ Router.post('/getuser', fetchUser, async (req, res) => {
     catch (error) {
         console.log(error);
         res.status(500).send('Internal server error occured')
+    }
+})
+
+Router.get('/check-login', (req, res) => {
+    try {
+        let token = req.header('auth-token');
+
+        // Return false if token is not available 
+        if (!token) {
+            return res.status(200).json({ message: "Access token not available", isLoggedIn: false })
+        }
+
+        // verify the token 
+        jwt.verify(token, jwtSecret, (error, decoded) => {
+            if (error) {
+                res.status(200).json({ message: "Invalid access token", isLoggedIn: false })
+            }
+            res.status(200).json({ message: 'Authenticated', isLoggedIn: true });
+        })
+    } catch (error) {
+        console.error('Unable to verify access token:', error.message);
+        res.status(500).json({ error: 'Internal server error' });
     }
 })
 
